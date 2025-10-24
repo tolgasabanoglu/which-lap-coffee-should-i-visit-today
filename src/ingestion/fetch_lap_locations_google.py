@@ -24,7 +24,7 @@ OUTPUT_CSV = Path("data/processed/lap_locations_google.csv")
 def fetch_lap_coffee():
     url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
     params = {
-        "query": "LAP Coffee Berlin",
+        "query": "LAP Coffee",
         "key": API_KEY
     }
 
