@@ -1,0 +1,14 @@
+pandas
+geopandas
+shapely
+pyproj
+google-cloud-bigquery
+pandas-gbq
+dbt-bigquery
+requests
+scikit-learn
+xgboost
+matplotlib
+folium
+pyyaml
+python-dotenv
