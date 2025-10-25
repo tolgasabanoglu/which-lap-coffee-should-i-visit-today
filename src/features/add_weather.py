@@ -6,14 +6,18 @@ import requests
 from pathlib import Path
 from datetime import datetime, timedelta
 
-# Input & output
-INPUT_GPKG = Path("data/processed/lap_locations_env_open.gpkg")
+# -------------------------
+# 1. Input & output
+# -------------------------
+INPUT_GPKG = Path("data/processed/lap_locations.gpkg")
 OUTPUT_GPKG = Path("data/processed/lap_locations_historical_weather.gpkg")
 
 # Load LAP Coffee GeoPackage
 gdf = gpd.read_file(INPUT_GPKG, layer="lap_coffee")
 
-# Function to determine season
+# -------------------------
+# 2. Function to determine season
+# -------------------------
 def get_season(date):
     month = date.month
     if month in [3, 4, 5]:
@@ -22,10 +26,12 @@ def get_season(date):
         return "Summer"
     elif month in [9, 10, 11]:
         return "Autumn"
-    else:
+    else:  # months 12, 1, 2
         return "Winter"
 
-# Function to get historical weather from Open-Meteo
+# -------------------------
+# 3. Function to get historical weather from Open-Meteo
+# -------------------------
 def get_historical_weather(lat, lon, start_date, end_date):
     url = (
         "https://archive-api.open-meteo.com/v1/archive"
@@ -48,11 +54,15 @@ def get_historical_weather(lat, lon, start_date, end_date):
         return records
     return []
 
-# Define start and end dates
-START_DATE = "2025-06-01"
+# -------------------------
+# 4. Define start and end dates
+# -------------------------
+START_DATE = "2025-01-01"  # updated start date
 END_DATE = datetime.today().strftime("%Y-%m-%d")
 
-# Collect all data
+# -------------------------
+# 5. Collect all weather data
+# -------------------------
 all_data = []
 
 for i, row in gdf.iterrows():
@@ -66,13 +76,14 @@ for i, row in gdf.iterrows():
             "lon": lon,
             "rating": row.get("rating", None),
             "user_ratings_total": row.get("user_ratings_total", None),
-            "elevation_m": row.get("elevation_m", None),
             "season": get_season(pd.to_datetime(record["weather_date"]))
         })
         all_data.append(record)
         print(f"{row['name']} {record['weather_date']} -> {record['temp_max']}°C")
 
-# Convert to GeoDataFrame
+# -------------------------
+# 6. Convert to GeoDataFrame
+# -------------------------
 df = pd.DataFrame(all_data)
 gdf_final = gpd.GeoDataFrame(
     df,
@@ -80,6 +91,8 @@ gdf_final = gpd.GeoDataFrame(
     crs="EPSG:4326"
 )
 
-# Save to GeoPackage
+# -------------------------
+# 7. Save to GeoPackage
+# -------------------------
 gdf_final.to_file(OUTPUT_GPKG, layer="lap_coffee", driver="GPKG")
-print(f"Saved historical weather GeoPackage to {OUTPUT_GPKG}")
+print(f"✅ Saved historical weather GeoPackage to {OUTPUT_GPKG}")

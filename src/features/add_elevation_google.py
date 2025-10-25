@@ -5,7 +5,7 @@ import time
 
 # Paths
 INPUT_GPKG = Path("data/processed/lap_locations.gpkg")
-OUTPUT_GPKG = Path("data/processed/lap_locations_env_open.gpkg")
+OUTPUT_GPKG = Path("data/processed/lap_locations_elevation.gpkg")
 
 # Load points
 gdf = gpd.read_file(INPUT_GPKG, layer="lap_coffee")

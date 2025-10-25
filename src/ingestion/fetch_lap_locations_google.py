@@ -57,7 +57,7 @@ def fetch_lap_coffee():
 
         if "next_page_token" in res:
             # Wait a couple seconds before requesting the next page
-            time.sleep(2)
+            time.sleep(5)
             params["pagetoken"] = res["next_page_token"]
             page += 1
         else:
